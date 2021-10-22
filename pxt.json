@@ -1,5 +1,5 @@
 {
-    "name": "kitronik-soln-crawler-bot",
+    "name": "think-create-learn-crawlbot",
     "description": "",
     "dependencies": {
         "core": "*",
