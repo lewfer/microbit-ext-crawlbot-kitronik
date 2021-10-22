@@ -1,15 +1,11 @@
 /**
+ * Makecode block for the Think Create Learn Crawlbot (Kitronik control)
+ *
  * servo 1 = left hip
- * 
  * servo 2 = left knee
- * 
  * servo 3 = right hip
- * 
  * servo 4 = right knee
  */
-// position 0 is mid
-// position 1 is forward
-// position -1 is backward
 
 enum enumSide {
     left,
@@ -33,6 +29,8 @@ enum enumKneeDirection {
     middle
 }
 
+
+//% color="#ff7f50" icon="\uf06e" block="CrawlBot"
 namespace crawlbot {
 
     let rightHipStepAngle = 0
