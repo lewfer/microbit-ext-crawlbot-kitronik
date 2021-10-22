@@ -10,185 +10,208 @@
 // position 0 is mid
 // position 1 is forward
 // position -1 is backward
+
+enum enumSide {
+    left,
+    right
+}
+
+enum enumJoint {
+    hip,
+    knee
+}
+
+enum enumHipDirection {
+    forward,
+    backward,
+    middle
+}
+
+enum enumKneeDirection {
+    up,
+    down,
+    middle
+}
+
 namespace crawlbot {
 
     let rightHipStepAngle = 0
     let rightHipStep = 0
     let oldRightHipAngle = 0
+
     let rightKneeStepAngle = 0
     let rightKneeStep = 0
     let oldRightKneeAngle = 0
+
     let leftKneeStepAngle = 0
     let leftKneeStep = 0
     let oldLeftKneeAngle = 0
-    let angle = 0
-    let step = 0
+
     let leftHipStepAngle = 0
     let leftHipStep = 0
     let oldLeftHipAngle = 0
+
     let numSteps = 0
+
     let currentRightKneeAngle = 0
     let currentLeftKneeAngle = 0
     let currentRightHipAngle = 0
     let currentLeftHipAngle = 0
 
-    enum enumSide {
-        left,
-        right
+    let lowAngle = 70
+    let midAngle = 90
+    let highAngle = 110
+    let stepPause = 20
+
+    ////let angle = 0
+    let step = 0
+
+    //% blockId=initialise
+    //% block="initialise"
+    export function initialise() {
+
+        currentLeftHipAngle = 90
+        currentRightHipAngle = 90
+        currentLeftKneeAngle = 90
+        currentRightKneeAngle = 90
+        numSteps = 50
+        rightHip(0)
+        rightKnee(0)
+        leftHip(0)
+        leftKnee(0)
+        let rightMovement = 1
+        let leftMovement = 1
+        pins.touchSetMode(TouchTarget.P0, TouchTargetMode.Capacitive)
+        pins.touchSetMode(TouchTarget.P1, TouchTargetMode.Capacitive)
     }
-    
-    //% blockId=move
-    //% block="move %side side joint %joint to %direction"
-    export function move(side: enumSide, joint: string, direction: string) {
+
+    //% blockId=setAngles
+    //% block="set angles low %low mid %mid high %high"
+    export function setAngles(low: number, mid: number, high: number) {
+        lowAngle = low
+        midAngle = mid
+        highAngle = high
+    }
+
+    //% blockId=setStepPause
+    //% block="set step pause %pause"
+    export function setStepPause(pause: number) {
+        stepPause = pause
+    }
+
+    //% blockId=moveHip
+    //% block="move hip %side side to %direction"
+    export function moveHip(side: enumSide, direction: enumHipDirection) {
         if (side == enumSide.left) {
-            if (joint == "knee") {
-                if (direction == "u") {
-                    leftKnee(1)
-                } else if (direction == "d") {
-                    leftKnee(-1)
-                } else if (direction == "m") {
-                    leftKnee(0)
-                }
-            } else if (joint == "hip") {
-                if (direction == "f") {
-                    leftHip(1)
-                } else if (direction == "b") {
-                    leftHip(-1)
-                } else if (direction == "m") {
-                    leftHip(0)
-                }
+            if (direction == enumHipDirection.forward) {
+                leftHip(1)
+            } else if (direction == enumHipDirection.backward) {
+                leftHip(-1)
+            } else if (direction == enumHipDirection.middle) {
+                leftHip(0)
             }
         } else if (side == enumSide.right) {
-            if (joint == "knee") {
-                if (direction == "u") {
-                    rightKnee(1)
-                } else if (direction == "d") {
-                    rightKnee(-1)
-                } else if (direction == "m") {
-                    rightKnee(0)
-                }
-            } else if (joint == "hip") {
-                if (direction == "f") {
-                    rightHip(1)
-                } else if (direction == "b") {
-                    rightHip(-1)
-                } else if (direction == "m") {
-                    rightHip(0)
-                }
+            if (direction == enumHipDirection.forward) {
+                rightHip(1)
+            } else if (direction == enumHipDirection.backward) {
+                rightHip(-1)
+            } else if (direction == enumHipDirection.middle) {
+                rightHip(0)
             }
         }
     }
 
-function leftHip (position: number) {
-    oldLeftHipAngle = currentLeftHipAngle
-    if (position == 0) {
-        currentLeftHipAngle = 90
-    } else if (position == 1) {
-        currentLeftHipAngle = 70
-    } else if (position == -1) {
-        currentLeftHipAngle = 110
-    }
-    leftHipStep = (currentLeftHipAngle - oldLeftHipAngle) / numSteps
-    leftHipStepAngle = oldLeftHipAngle + leftHipStep
-    for (let index = 0; index < numSteps; index++) {
-        Kitronik_Robotics_Board.servoWrite(Kitronik_Robotics_Board.Servos.Servo1, leftHipStepAngle)
-        leftHipStepAngle = leftHipStepAngle + leftHipStep
-        basic.pause(20)
-    }
-}
-function smoothMove (servo: number, fromAngle: number, toAngle: number) {
-    step = (toAngle - fromAngle) / numSteps
-    angle = fromAngle + step
-    if (servo == 1) {
-    	
-    } else if (servo == 2) {
-        for (let index = 0; index < numSteps; index++) {
-            crickit.servo2.setAngle(angle)
-            angle = angle + step
-            basic.pause(20)
-        }
-    } else if (servo == 3) {
-        for (let index = 0; index < numSteps; index++) {
-            crickit.servo3.setAngle(angle)
-            angle = angle + step
-            basic.pause(20)
-        }
-    } else if (servo == 4) {
-        for (let index = 0; index < numSteps; index++) {
-            crickit.servo4.setAngle(angle)
-            angle = angle + step
-            basic.pause(10)
+    //% blockId=moveKnee
+    //% block="move knee %side side to %direction"
+    export function moveKnee(side: enumSide, direction: enumKneeDirection) {
+        if (side == enumSide.left) {
+            if (direction == enumKneeDirection.up) {
+                leftKnee(1)
+            } else if (direction == enumKneeDirection.down) {
+                leftKnee(-1)
+            } else if (direction == enumKneeDirection.middle) {
+                leftKnee(0)
+            } 
+        } else if (side == enumSide.right) {
+            if (direction == enumKneeDirection.up) {
+                rightKnee(1)
+            } else if (direction == enumKneeDirection.down) {
+                rightKnee(-1)
+            } else if (direction == enumKneeDirection.middle) {
+                rightKnee(0)
+            }
         }
     }
-}
-function leftKnee (position: number) {
-    oldLeftKneeAngle = currentLeftKneeAngle
-    if (position == 0) {
-        currentLeftKneeAngle = 90
-    } else if (position == 1) {
-        currentLeftKneeAngle = 110
-    } else if (position == -1) {
-        currentLeftKneeAngle = 70
-    }
-    leftKneeStep = (currentLeftKneeAngle - oldLeftKneeAngle) / numSteps
-    leftKneeStepAngle = oldLeftKneeAngle + leftKneeStep
-    for (let index = 0; index < numSteps; index++) {
-        Kitronik_Robotics_Board.servoWrite(Kitronik_Robotics_Board.Servos.Servo2, leftKneeStepAngle)
-        leftKneeStepAngle = leftKneeStepAngle + leftKneeStep
-        basic.pause(20)
-    }
-}
-function rightKnee (position: number) {
-    oldRightKneeAngle = currentRightKneeAngle
-    if (position == 0) {
-        currentRightKneeAngle = 90
-    } else if (position == 1) {
-        currentRightKneeAngle = 70
-    } else if (position == -1) {
-        currentRightKneeAngle = 110
-    }
-    rightKneeStep = (currentRightKneeAngle - oldRightKneeAngle) / numSteps
-    rightKneeStepAngle = oldRightKneeAngle + rightKneeStep
-    for (let index = 0; index < numSteps; index++) {
-        Kitronik_Robotics_Board.servoWrite(Kitronik_Robotics_Board.Servos.Servo4, rightKneeStepAngle)
-        rightKneeStepAngle = rightKneeStepAngle + rightKneeStep
-        basic.pause(20)
-    }
-}
-function rightHip (position: number) {
-    oldRightHipAngle = currentRightHipAngle
-    if (position == 0) {
-        currentRightHipAngle = 90
-    } else if (position == 1) {
-        currentRightHipAngle = 110
-    } else if (position == -1) {
-        currentRightHipAngle = 70
-    }
-    rightHipStep = (currentRightHipAngle - oldRightHipAngle) / numSteps
-    rightHipStepAngle = oldRightHipAngle + rightHipStep
-    for (let index = 0; index < numSteps; index++) {
-        Kitronik_Robotics_Board.servoWrite(Kitronik_Robotics_Board.Servos.Servo3, rightHipStepAngle)
-        rightHipStepAngle = rightHipStepAngle + rightHipStep
-        basic.pause(20)
-    }
-}
 
-//% blockId=initialise
-//% block="initialise"
-export function initialise() {
+    function leftHip (position: number) {
+        oldLeftHipAngle = currentLeftHipAngle
+        if (position == 0) {
+            currentLeftHipAngle = midAngle
+        } else if (position == 1) {
+            currentLeftHipAngle = lowAngle
+        } else if (position == -1) {
+            currentLeftHipAngle = highAngle
+        }
+        leftHipStep = (currentLeftHipAngle - oldLeftHipAngle) / numSteps
+        leftHipStepAngle = oldLeftHipAngle + leftHipStep
+        for (let index = 0; index < numSteps; index++) {
+            Kitronik_Robotics_Board.servoWrite(Kitronik_Robotics_Board.Servos.Servo1, leftHipStepAngle)
+            leftHipStepAngle = leftHipStepAngle + leftHipStep
+            basic.pause(stepPause)
+        }
+    }
+    
+    function leftKnee (position: number) {
+        oldLeftKneeAngle = currentLeftKneeAngle
+        if (position == 0) {
+            currentLeftKneeAngle = midAngle
+        } else if (position == 1) {
+            currentLeftKneeAngle = highAngle
+        } else if (position == -1) {
+            currentLeftKneeAngle = lowAngle
+        }
+        leftKneeStep = (currentLeftKneeAngle - oldLeftKneeAngle) / numSteps
+        leftKneeStepAngle = oldLeftKneeAngle + leftKneeStep
+        for (let index = 0; index < numSteps; index++) {
+            Kitronik_Robotics_Board.servoWrite(Kitronik_Robotics_Board.Servos.Servo2, leftKneeStepAngle)
+            leftKneeStepAngle = leftKneeStepAngle + leftKneeStep
+            basic.pause(stepPause)
+        }
+    }
 
-    currentLeftHipAngle = 90
-    currentRightHipAngle = 90
-    currentLeftKneeAngle = 90
-    currentRightKneeAngle = 90
-    numSteps = 50
-    rightHip(0)
-    rightKnee(0)
-    leftHip(0)
-    leftKnee(0)
-    let rightMovement = 1
-    let leftMovement = 1
-    pins.touchSetMode(TouchTarget.P0, TouchTargetMode.Capacitive)
-    pins.touchSetMode(TouchTarget.P1, TouchTargetMode.Capacitive)
-}
+    function rightKnee (position: number) {
+        oldRightKneeAngle = currentRightKneeAngle
+        if (position == 0) {
+            currentRightKneeAngle = midAngle
+        } else if (position == 1) {
+            currentRightKneeAngle = lowAngle
+        } else if (position == -1) {
+            currentRightKneeAngle = highAngle
+        }
+        rightKneeStep = (currentRightKneeAngle - oldRightKneeAngle) / numSteps
+        rightKneeStepAngle = oldRightKneeAngle + rightKneeStep
+        for (let index = 0; index < numSteps; index++) {
+            Kitronik_Robotics_Board.servoWrite(Kitronik_Robotics_Board.Servos.Servo4, rightKneeStepAngle)
+            rightKneeStepAngle = rightKneeStepAngle + rightKneeStep
+            basic.pause(stepPause)
+        }
+    }
+
+    function rightHip (position: number) {
+        oldRightHipAngle = currentRightHipAngle
+        if (position == 0) {
+            currentRightHipAngle = midAngle
+        } else if (position == 1) {
+            currentRightHipAngle = highAngle
+        } else if (position == -1) {
+            currentRightHipAngle = lowAngle
+        }
+        rightHipStep = (currentRightHipAngle - oldRightHipAngle) / numSteps
+        rightHipStepAngle = oldRightHipAngle + rightHipStep
+        for (let index = 0; index < numSteps; index++) {
+            Kitronik_Robotics_Board.servoWrite(Kitronik_Robotics_Board.Servos.Servo3, rightHipStepAngle)
+            rightHipStepAngle = rightHipStepAngle + rightHipStep
+            basic.pause(stepPause)
+        }
+    }
 }
