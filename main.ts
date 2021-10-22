@@ -31,11 +31,16 @@ namespace crawlbot {
     let currentLeftKneeAngle = 0
     let currentRightHipAngle = 0
     let currentLeftHipAngle = 0
+
+    enum enumSide {
+        left,
+        right
+    }
     
     //% blockId=move
     //% block="move %side side joint %joint to %direction"
-    export function move(side: string, joint: string, direction: string) {
-        if (side == "left") {
+    export function move(side: enumSide, joint: string, direction: string) {
+        if (side == enumSide.left) {
             if (joint == "knee") {
                 if (direction == "u") {
                     leftKnee(1)
@@ -53,7 +58,7 @@ namespace crawlbot {
                     leftHip(0)
                 }
             }
-        } else if (side == "right") {
+        } else if (side == enumSide.right) {
             if (joint == "knee") {
                 if (direction == "u") {
                     rightKnee(1)
@@ -167,7 +172,10 @@ function rightHip (position: number) {
         basic.pause(20)
     }
 }
-function initialise() {
+
+//% blockId=initialise
+//% block="initialise"
+export function initialise() {
 
     currentLeftHipAngle = 90
     currentRightHipAngle = 90
