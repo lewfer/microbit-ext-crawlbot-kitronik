@@ -77,8 +77,8 @@ namespace crawlbot {
         rightKnee(0)
         leftHip(0)
         leftKnee(0)
-        let rightMovement = 1
-        let leftMovement = 1
+        //let rightMovement = 1
+        //let leftMovement = 1
         pins.touchSetMode(TouchTarget.P0, TouchTargetMode.Capacitive)
         pins.touchSetMode(TouchTarget.P1, TouchTargetMode.Capacitive)
     }
@@ -98,7 +98,7 @@ namespace crawlbot {
     }
 
     //% blockId=moveHip
-    //% block="move hip %side side to %direction"
+    //% block="move %side hip %direction"
     export function moveHip(side: enumSide, direction: enumHipDirection) {
         if (side == enumSide.left) {
             if (direction == enumHipDirection.forward) {
@@ -120,7 +120,7 @@ namespace crawlbot {
     }
 
     //% blockId=moveKnee
-    //% block="move knee %side side to %direction"
+    //% block="move %side knee %direction"
     export function moveKnee(side: enumSide, direction: enumKneeDirection) {
         if (side == enumSide.left) {
             if (direction == enumKneeDirection.up) {
